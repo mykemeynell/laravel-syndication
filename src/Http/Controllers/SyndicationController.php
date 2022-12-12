@@ -51,13 +51,11 @@ class SyndicationController extends Controller
             return abort(404);
         }
 
-        $cacheKey = $feed->cacheKey();
+        $feedData = $feed->isCached()
+            ? $feed->getDataFromCache() : $feed->getData();
 
-        $feedData = $this->cache()->has($cacheKey)
-            ? $this->cache()->get($cacheKey) : $this->getFeedData($feed);
-
-        if(!$this->cache()->has($cacheKey)) {
-            $this->saveToCache($cacheKey, $feedData);
+        if(!$feed->isCached()) {
+            $feed->saveToCache();
         }
 
         return response()
@@ -66,53 +64,10 @@ class SyndicationController extends Controller
     }
 
     /**
-     * Save the content data to the cache.
-     *
-     * @param string $cacheKey
-     * @param        $feedData
-     *
-     * @return false|mixed
-     */
-    private function saveToCache(string $cacheKey, $feedData): mixed
-    {
-        $globalCacheFeeds = config('syndication.cache_feeds', false);
-        $globalCacheTtl = config('syndication.cache_ttl', 1440);
-
-        $cachingConfig = collect(
-            config('syndication.caching', [])
-        );
-
-        $cacheThisFeed = ($cachingConfig->has($cacheKey) && $cachingConfig->get($cacheKey) !== false && $cachingConfig->get($cacheKey) > 0)
-            || $globalCacheFeeds;
-
-        $cacheTtl = $cachingConfig->has($cacheKey) && $cachingConfig->get($cacheKey) !== false && $cachingConfig->get($cacheKey) > 0
-            ? $cachingConfig->get($cacheKey) : $globalCacheTtl;
-
-        if($cacheThisFeed) {
-            return $this->cache()->remember($cacheKey, now()->addMinutes($cacheTtl * 60), fn () => $feedData);
-        }
-
-        return false;
-    }
-
-    /**
-     * Get the cache.
-     *
-     * @return \Illuminate\Contracts\Cache\Repository
-     */
-    private function cache(): \Illuminate\Contracts\Cache\Repository
-    {
-        $store = config('syndication.cache_store');
-
-        return Cache::store($store);
-    }
-
-    /**
      * Gets the cache key.
      *
      * @param string $feedName
      * @param string $feedType
-     * @param string $separator
      *
      * @return string
      */
@@ -148,22 +103,5 @@ class SyndicationController extends Controller
             'rss' => 'rss',
             default => null
         };
-    }
-
-    /**
-     * Get the feed data.
-     *
-     * @param Feed $feed
-     *
-     * @return array
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    private function getFeedData(Feed $feed): array
-    {
-        return [
-            'encoding' => config('syndication.encoding', 'utf-8'),
-            'feed' => $feed,
-            'items' => $feed->getItems()
-        ];
     }
 }
