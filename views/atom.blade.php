@@ -11,12 +11,21 @@
     <title>{{ $feed->title() }}</title>
     <link rel="self" href="{{ $feed->atomSelfLink() }}"/>
     <updated>{{ $feed->updated()->format('Y-m-d\TH:i:s\Z') }}</updated>
-    @if(!empty($feed->author()))
-    <author>
-        @if(!empty($feed->author()->hasName()))<name>{{ $feed->author()->name }}</name>@endif
-        @if(!empty($feed->author()->hasEmail()))<email>{{ $feed->author()->email }}</email>@endif
-        @if(!empty($feed->author()->hasUri()))<uri>{{ $feed->author()->uri }}</uri>@endif
-    </author>
+    @if(!empty($feed->atomAuthor()))
+        @php
+            $authors = $feed->atomAuthor();
+            $authors = $authors instanceof \LaravelSyndication\Feeds\Structure\Atom\Person
+                ? collect([$authors]) : $authors;
+            $authors = !$authors instanceof \Illuminate\Support\Collection
+                ? collect($authors) : $authors;
+        @endphp
+        @foreach($authors as $author)
+            <author>
+                @if($author->hasName())<name>{{ $author->name }}</name>@endif
+                @if($author->hasEmail())<email>{{ $author->email }}</email>@endif
+                @if($author->hasUri())<uri>{{ $author->uri }}</uri>@endif
+            </author>
+        @endforeach
     @endif
     <id>{{ $feed->getAtomId() }}</id>
     @if(!empty($feed->generator()))

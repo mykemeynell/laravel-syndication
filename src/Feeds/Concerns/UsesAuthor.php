@@ -3,7 +3,6 @@
 namespace LaravelSyndication\Feeds\Concerns;
 
 use Illuminate\Support\Collection;
-use LaravelSyndication\Feeds\FeedItem;
 use LaravelSyndication\Feeds\Structure\Atom\Person;
 
 trait UsesAuthor
@@ -31,12 +30,32 @@ trait UsesAuthor
      *
      * @param array|Collection|Person $author
      *
-     * @return FeedItem
+     * @return static
      */
-    public function author(array|Collection|Person $author): FeedItem
+    public function author(array|Collection|Person $author): static
     {
         $this->author = $author;
         return $this;
+    }
+
+    /**
+     * Get the author.
+     *
+     * @return Collection|array|Person|null
+     */
+    public function atomAuthor(): null|Collection|array|Person
+    {
+        return null;
+    }
+
+    /**
+     * Test if there is an author present.
+     *
+     * @return bool
+     */
+    public function hasAuthor(): bool
+    {
+        return !empty($this->author);
     }
 
     /**
@@ -44,9 +63,9 @@ trait UsesAuthor
      *
      * @param array|Collection|Person $contributor
      *
-     * @return FeedItem
+     * @return static
      */
-    public function contributor(array|Collection|Person $contributor): FeedItem
+    public function contributor(array|Collection|Person $contributor): static
     {
         $this->contributor = $contributor;
         return $this;

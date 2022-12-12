@@ -175,6 +175,19 @@ public function filter(Builder $builder): Builder
 }
 ```
 
+### Specify author for atom feeds
+
+```php
+public function atomAuthor(): null|Collection|array|Person
+{
+    return new \LaravelSyndication\Feeds\Structure\Atom\Person(
+        name: "John Doe", 
+        email: "john@example.com", 
+        uri: "https://exmaple.com/person/john-doe"
+    );
+}
+```
+
 ### Configuring the feed model
 
 Once you have created your feed object and specified the model and filter you 

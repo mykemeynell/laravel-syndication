@@ -3,6 +3,7 @@
 namespace LaravelSyndication\Feeds;
 
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -12,12 +13,13 @@ use LaravelSyndication\Contracts\Feeds\SyndicatesWithCategory;
 use LaravelSyndication\Contracts\Feeds\SyndicatesWithCopyright;
 use LaravelSyndication\Contracts\Feeds\SyndicatesWithImage;
 use LaravelSyndication\Contracts\Models\IsSyndicationItem;
+use LaravelSyndication\Feeds\Concerns\UsesAuthor;
 use LaravelSyndication\Feeds\Concerns\UsesCache;
 use Ramsey\Uuid\Uuid;
 
 abstract class Feed
 {
-    use UsesCache;
+    use UsesCache, UsesAuthor;
 
     protected ?string $identifier = null;
     protected ?string $requestedFeedType = null;
@@ -290,5 +292,32 @@ abstract class Feed
 
             return $model->toFeedItem();
         });
+    }
+
+    /**
+     * Get the feed data.
+     *
+     * @return array
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function getData(): array
+    {
+        return [
+            'encoding' => config('syndication.encoding', 'utf-8'),
+            'feed' => $this,
+            'items' => $this->getItems()
+        ];
+    }
+
+    /**
+     * Gets the last time a feed was cached, if there is no cache entry then
+     * it will return the current timestamp.
+     *
+     * @return Carbon
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function updated(): Carbon
+    {
+        return $this->lastCachedAt();
     }
 }
