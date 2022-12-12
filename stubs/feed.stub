@@ -1,0 +1,38 @@
+<?php
+
+namespace %
+
+NAMESPACE%;
+
+use Illuminate\Database\Eloquent\Builder;
+use LaravelSyndication\Feeds\Feed;
+use LaravelSyndication\Contracts\Feeds\{
+    SyndicatesWithImage,
+    SyndicatesWithCopyright,
+    SyndicatesWithCategory,
+    AtomFeed,
+    AtomFeedOnly
+};
+
+class %CLASS_NAME % extends Feed
+{
+    function model(): string
+    {
+        // TODO: Implement model() method.
+    }
+
+    function title(): string
+    {
+        // TODO: Implement title() method.
+    }
+
+    function description(): string
+    {
+        // TODO: Implement description() method.
+    }
+
+    function url(): string
+    {
+        // TODO: Implement url() method.
+    }
+}

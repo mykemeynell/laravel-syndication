@@ -1,0 +1,31 @@
+{
+    "name": "mykemeynell/laravel-syndication",
+    "description": "RSS and Atom feeds for laravel",
+    "type": "library",
+    "require-dev": {
+        "laravel/laravel": "^9.3"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "LaravelSyndication\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Myke Meynell",
+            "email": "hi@myke.codes"
+        }
+    ],
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LaravelSyndication\\LaravelSyndicationServiceProvider"
+            ],
+            "aliases": {
+                "LaravelSyndication": "LaravelSyndication\\Facades\\Syndicate"
+            }
+        }
+    }
+}
