@@ -12,11 +12,15 @@ use LaravelSyndication\Contracts\Feeds\SyndicatesWithCategory;
 use LaravelSyndication\Contracts\Feeds\SyndicatesWithCopyright;
 use LaravelSyndication\Contracts\Feeds\SyndicatesWithImage;
 use LaravelSyndication\Contracts\Models\IsSyndicationItem;
+use LaravelSyndication\Feeds\Concerns\UsesCache;
 use Ramsey\Uuid\Uuid;
 
 abstract class Feed
 {
+    use UsesCache;
+
     protected ?string $identifier = null;
+    protected ?string $requestedFeedType = null;
 
     /**
      * Get the model used in this feed.
@@ -244,6 +248,24 @@ abstract class Feed
         }
 
         $this->identifier = $identifier;
+        return true;
+    }
+
+    /**
+     * The requested feed type for a feed object.
+     *
+     * @param string $requestedFeedType
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    function requestedFeedType(string $requestedFeedType): bool
+    {
+        if(!empty($this->requestedFeedType)) {
+            throw new \Exception("A Feed can only have its feed type set once.");
+        }
+
+        $this->requestedFeedType = $requestedFeedType;
         return true;
     }
 
