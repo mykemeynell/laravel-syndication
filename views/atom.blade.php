@@ -64,7 +64,7 @@
         <title>{{ $item->getTitle() }}</title>
         <link href="{{ $item->getUrl() }}"/>
         <updated>{{ $item->getUpdated()->format('Y-m-d\TH:i:s\Z') }}</updated>
-        <summary><![CDATA[{{ $item->getDescription() }}]]</summary>
+        <summary><![CDATA[{{ $item->getDescription() }}]]></summary>
         @if($item->hasContent())
             {!! $item->getContent() !!}
         @endif
