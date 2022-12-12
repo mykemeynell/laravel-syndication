@@ -35,6 +35,7 @@ class SyndicationController extends Controller
         /** @var Feed $feed */
         $feed = app()->make($feed);
         $feed->identifier($feedName);
+        $feed->requestedFeedType($feedType);
 
         if (!$feed instanceof Feed) {
             throw new \Exception(
@@ -50,7 +51,7 @@ class SyndicationController extends Controller
             return abort(404);
         }
 
-        $cacheKey = $this->cacheKey($feedName, $feedType);
+        $cacheKey = $feed->cacheKey();
 
         $feedData = $this->cache()->has($cacheKey)
             ? $this->cache()->get($cacheKey) : $this->getFeedData($feed);
