@@ -10,7 +10,7 @@
     <channel>
         <title>{{ $feed->title() }}</title>
         <link>{{ $feed->url() }}</link>
-        <description>{{ $feed->description() }}</description>
+        <description><![CDATA[{!! $feed->description() !!}]]></description>
         @if($feed->hasCategory())<category>{{ $feed->category() }}</category>@endif
         @if($feed->hasCopyright())<copyright>{{ $feed->copyright() }}</copyright>@endif
         @if(!empty($feed->ttl()))
@@ -29,7 +29,7 @@
         <item>
             <title>{{ $item->getTitle() }}</title>
             <link>{{ $item->getUrl() }}</link>
-            <description>{{ $item->getDescription() }}</description>
+            <description><![CDATA[{!! $item->getDescription() !!}]]></description>
             @if($item->hasAuthor())
                 @if($item->getAuthor() instanceof \LaravelSyndication\Feeds\Structure\Atom\Person)
                 <author>{{ $item->getAuthor()->email }}</author>

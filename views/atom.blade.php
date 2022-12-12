@@ -46,7 +46,7 @@
         <logo>{{ $feed->logo() }}</logo>
     @endif
     @if(!empty($feed->subtitle()))
-        <subtitle>{{ $feed->subtitle() }}</subtitle>
+        <subtitle><![CDATA[{{ $feed->subtitle() }}]]></subtitle>
     @endif
     @if($feed->hasContributors())
         @foreach($feed->contributors() as $contributor)
@@ -64,7 +64,7 @@
         <title>{{ $item->getTitle() }}</title>
         <link href="{{ $item->getUrl() }}"/>
         <updated>{{ $item->getUpdated()->format('Y-m-d\TH:i:s\Z') }}</updated>
-        <summary>{{ $item->getDescription() }}</summary>
+        <summary><![CDATA[{{ $item->getDescription() }}]]</summary>
         @if($item->hasContent())
             {!! $item->getContent() !!}
         @endif
