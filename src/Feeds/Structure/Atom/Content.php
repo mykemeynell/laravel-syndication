@@ -2,6 +2,7 @@
 
 namespace LaravelSyndication\Feeds\Structure\Atom;
 
+use Illuminate\Support\Str;
 use LaravelSyndication\Feeds\Structure\Items\RSS\Enclosure;
 
 class Content

@@ -2,6 +2,7 @@
 
 namespace LaravelSyndication\Feeds\Structure\Items\RSS;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -62,6 +63,7 @@ class Enclosure
      * Get the contents of the enclosure.
      *
      * @return string|null
+     * @throws GuzzleException
      */
     public function contents(): ?string
     {
@@ -104,7 +106,6 @@ class Enclosure
         if(!empty($this->filename)) {
             return File::get($this->filename);
         }
-
 
         $client = new \GuzzleHttp\Client();
         $response = $client->request('GET', $this->url);

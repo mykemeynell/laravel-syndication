@@ -18,11 +18,21 @@ trait UsesComments
      *
      * @param string $commentsUrl
      *
-     * @return FeedItem
+     * @return static
      */
-    public function comments(string $commentsUrl): FeedItem
+    public function comments(string $commentsUrl): static
     {
         $this->comments = $commentsUrl;
         return $this;
+    }
+
+    public function getComments(): ?string
+    {
+        return $this->comments;
+    }
+
+    public function hasComments(): bool
+    {
+        return !empty($this->comments);
     }
 }

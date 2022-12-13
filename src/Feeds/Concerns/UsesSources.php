@@ -21,11 +21,21 @@ trait UsesSources
      * @param Source $source
      *
      * @see https://validator.w3.org/feed/docs/atom.html#optionalEntryElements
-     * @return FeedItem
+     * @return static
      */
-    public function source(Source $source): FeedItem
+    public function source(Source $source): static
     {
         $this->source = $source;
         return $this;
+    }
+
+    public function hasSource(): bool
+    {
+        return !empty($this->source);
+    }
+
+    public function getSource(): ?Source
+    {
+        return $this->source;
     }
 }

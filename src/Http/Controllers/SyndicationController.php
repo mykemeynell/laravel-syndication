@@ -9,12 +9,10 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use LaravelSyndication\Contracts\Feeds\AtomFeed;
-use LaravelSyndication\Contracts\Feeds\AtomFeedOnly;
+use LaravelSyndication\Feeds\AtomFeed;
 use LaravelSyndication\Feeds\Feed;
+use LaravelSyndication\Feeds\RssAndAtomFeed;
 
 class SyndicationController extends Controller
 {
@@ -34,8 +32,6 @@ class SyndicationController extends Controller
 
         /** @var Feed $feed */
         $feed = app()->make($feed);
-        $feed->identifier($feedName);
-        $feed->requestedFeedType($feedType);
 
         if (!$feed instanceof Feed) {
             throw new \Exception(
@@ -43,16 +39,23 @@ class SyndicationController extends Controller
             );
         }
 
+        $feed->identifier($feedName);
+        $feed->requestedFeedType($feedType);
+
+        $feed->setUp();
+
         if(
             ($feedType === 'atom' &&
-            (!$feed instanceof AtomFeed && !$feed instanceof AtomFeedOnly)) ||
-            ($feedType === 'rss' && $feed instanceof AtomFeedOnly)
+            (!$feed instanceof RssAndAtomFeed && !$feed instanceof  AtomFeed)) ||
+
+            $feedType === 'rss' && $feed instanceof AtomFeed
         ) {
             return abort(404);
         }
 
         $feedData = $feed->isCached() && $feed->shouldUseCache()
             ? $feed->getDataFromCache() : $feed->getData();
+
 
         if(!$feed->isCached() && $feed->shouldUseCache()) {
             $feed->saveToCache();
