@@ -91,6 +91,41 @@ php artisan vendor:publish --tag=laravel-syndication
 'encoding' => 'utf-8',
 ```
 
+## Caching
+
+Sets the default caching value for all feeds. If set to false, nothing will be
+cached and no values current cached will be read.
+```php
+'cache_feeds' => true,
+```
+
+Specify the cache store to use. Using `null` will default to the default cache
+store.
+```php
+'cache_store' => null,
+```
+
+How long (in minutes) the cache is valid for.
+```php
+'cache_ttl' => 1440,
+```
+
+If you would like to specify different TTLs for different feeds, then
+you can do this here. It should be keyed using the same keys defined in
+the `feeds` key array, appended with the type of feed, for example;
+`'podcasts.atom'` or `'podcasts.rss'`
+
+To disable caching for specific feeds, set the value to `false`.
+
+To disable caching for all feeds except those specified, set
+`cache_feeds` to false, and specify a value greater than `0` in `caching`.
+
+```php
+'caching' => [
+    'posts.atom' => 10080
+],
+```
+
 # Usage
 
 ## Creating a new feed
