@@ -64,19 +64,6 @@ class SyndicationController extends Controller
     }
 
     /**
-     * Gets the cache key.
-     *
-     * @param string $feedName
-     * @param string $feedType
-     *
-     * @return string
-     */
-    private function cacheKey(string $feedName, string $feedType): string
-    {
-        return sprintf("%s.%s", $feedName, $feedType);
-    }
-
-    /**
      * Normalise the feed name.
      *
      * @param string|null $name
