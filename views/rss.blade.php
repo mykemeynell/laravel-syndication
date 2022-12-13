@@ -49,7 +49,7 @@
                 {!! $item->getEnclosure() !!}
             @endif
             @if(!empty($item->hasPublished()))
-                <pubDate>{{ $item->getPublished()->format('D, d M Y') }}</pubDate>
+                <pubDate>{{ $item->getPublished()->format('r') }}</pubDate>
             @endif
         </item>
         @endforeach
