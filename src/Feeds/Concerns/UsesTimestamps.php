@@ -3,7 +3,6 @@
 namespace LaravelSyndication\Feeds\Concerns;
 
 use Carbon\Carbon;
-use LaravelSyndication\Feeds\FeedItem;
 
 trait UsesTimestamps
 {
@@ -29,12 +28,22 @@ trait UsesTimestamps
      *
      * @param Carbon|null $published
      *
-     * @return FeedItem
+     * @return static
      */
-    public function published(?Carbon $published): FeedItem
+    public function published(?Carbon $published): static
     {
         $this->published = $published;
         return $this;
+    }
+
+    public function hasPublished(): bool
+    {
+        return !empty($this->published);
+    }
+
+    public function getPublished(): ?Carbon
+    {
+        return $this->published;
     }
 
     /**
@@ -42,11 +51,21 @@ trait UsesTimestamps
      *
      * @param Carbon $updated
      *
-     * @return FeedItem
+     * @return static
      */
-    public function updated(Carbon $updated): FeedItem
+    public function updated(Carbon $updated): static
     {
         $this->updated = $updated;
         return $this;
+    }
+
+    public function hasUpdated(): bool
+    {
+        return !empty($this->updated);
+    }
+
+    public function getUpdated(): ?Carbon
+    {
+        return $this->updated;
     }
 }

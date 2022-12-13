@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Psr\SimpleCache\InvalidArgumentException;
 
 trait UsesCache
 {
@@ -91,7 +92,7 @@ trait UsesCache
      * Get the cached timestamp key.
      *
      * @return Carbon
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function lastCachedAt(): Carbon
     {

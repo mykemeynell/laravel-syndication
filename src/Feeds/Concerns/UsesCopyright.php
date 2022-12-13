@@ -2,8 +2,6 @@
 
 namespace LaravelSyndication\Feeds\Concerns;
 
-use LaravelSyndication\Feeds\FeedItem;
-
 trait UsesCopyright
 {
     /**
@@ -18,11 +16,21 @@ trait UsesCopyright
      *
      * @param string $copyright
      *
-     * @return FeedItem
+     * @return $this
      */
-    public function copyright(string $copyright): FeedItem
+    public function copyright(string $copyright): static
     {
         $this->copyright = $copyright;
         return $this;
+    }
+
+    public function getCopyright(): ?string
+    {
+        return $this->copyright;
+    }
+
+    public function hasCopyright(): bool
+    {
+        return !empty($this->copyright);
     }
 }

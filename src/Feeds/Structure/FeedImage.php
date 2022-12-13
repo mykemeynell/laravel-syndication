@@ -33,18 +33,31 @@ class FeedImage
     /**
      * Set the FeedImage using an associative array.
      *
-     * @param array $config
+     * @param string|null $url
+     * @param string|null $title
+     * @param string|null $link
+     * @param array       $config
      *
      * @throws \Exception
      */
-    public function __construct(array $config = [])
+    public function __construct(?string $url = null, ?string $title = null, ?string $link = null, array $config = [])
     {
-        foreach($config as $property => $value) {
-            if(!property_exists($this, $property)) {
-                throw new \Exception(sprintf("Attempting to set unknown property [%s] on [%s]", $property, self::class));
-            }
+        if(($url || $title || $link) && !empty($config)) {
+            throw new \Exception(sprintf("Invalid feed image config, you can either pass the URL, title or link options OR a config array"));
+        }
 
-            $this->{$property} = $value;
+        if(empty($config)) {
+            $this->url = $url;
+            $this->link = $link;
+            $this->title = $title;
+        } else {
+            foreach ($config as $property => $value) {
+                if (!property_exists($this, $property)) {
+                    throw new \Exception(sprintf("Attempting to set unknown property [%s] on [%s]", $property, self::class));
+                }
+
+                $this->{$property} = $value;
+            }
         }
     }
 

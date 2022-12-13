@@ -2,8 +2,6 @@
 
 namespace LaravelSyndication\Feeds\Concerns;
 
-use LaravelSyndication\Feeds\FeedItem;
-
 trait UsesCategories
 {
     /**
@@ -18,11 +16,21 @@ trait UsesCategories
      *
      * @param string $term
      *
-     * @return FeedItem
+     * @return static
      */
-    public function category(string $term): FeedItem
+    public function category(string $term): static
     {
         $this->category = $term;
         return $this;
+    }
+
+    public function getCategory(): ?string
+    {
+        return $this->category;
+    }
+
+    public function hasCategory()
+    {
+        return !empty($this->category);
     }
 }

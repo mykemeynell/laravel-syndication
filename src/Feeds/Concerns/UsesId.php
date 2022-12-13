@@ -31,34 +31,11 @@ trait UsesId
      *
      * @see https://validator.w3.org/feed/docs/atom.html#requiredEntryElements
      *
-     * @return FeedItem
+     * @return $this
      */
-    public function id(string|int|Uuid $idUri): FeedItem
+    public function id(string|int|Uuid $idUri): static
     {
         $this->id = $idUri;
         return $this;
-    }
-
-    /**
-     * Get the FeedItem ID.
-     *
-     * @return int|Uuid|string|null
-     * @throws \Exception
-     */
-    public function getId(): int|string|Uuid|null
-    {
-        if(empty($this->id) && empty($this->getUrl())) {
-            throw new \Exception(sprintf("ID is a required attribute for Atom feed entries."));
-        }
-
-        if(empty($this->id) && !empty($this->getUrl())) {
-            return $this->getUrl();
-        }
-
-        if($this->id instanceof Uuid || Str::isUuid($this->id)) {
-            return sprintf("urn:uuid:%s", $this->id);
-        }
-
-        return $this->id;
     }
 }

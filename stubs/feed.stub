@@ -4,33 +4,20 @@ namespace %NAMESPACE%;
 
 use Illuminate\Database\Eloquent\Builder;
 use LaravelSyndication\Feeds\Feed;
-use LaravelSyndication\Contracts\Feeds\{
-    SyndicatesWithImage,
-    SyndicatesWithCopyright,
-    SyndicatesWithCategory,
-    AtomFeed,
-    AtomFeedOnly
+use LaravelSyndication\Feeds\{
+    AtomFeed, RssAndAtomFeed, RssFeed,
 };
 
-class %CLASS_NAME% extends Feed
+class %CLASS_NAME% extends RssAndAtomFeed
 {
-    function model(): string
+    public function setUp(): void
     {
-        // TODO: Implement model() method.
+        // .
     }
 
-    function title(): string
+    function filter(Builder $builder): Builder
     {
-        // TODO: Implement title() method.
-    }
-
-    function description(): string
-    {
-        // TODO: Implement description() method.
-    }
-
-    function url(): string
-    {
-        // TODO: Implement url() method.
+        return $builder
+            ->whereNotNull('published_at');
     }
 }

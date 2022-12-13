@@ -1,22 +1,22 @@
 # Laravel Syndication
 
-A super simple RSS and Atom feed package for Laravel. Can generate either RSS, 
+A super simple RSS and Atom feed package for Laravel. Can generate either RSS,
 Atom or both - for specified models.
 
 - [Installation](#installation)
-  - [With auto-discover](#with-auto-discovery)
-  - [Without auto-discover](#without-auto-discovery)
+    - [With auto-discover](#with-auto-discovery)
+    - [Without auto-discover](#without-auto-discovery)
 - [Publishing the configuration](#publish-the-configuration)
 - [Config](#config)
-  - [Feeds](#feeds)
-  - [Routing](#routing)
-  - [Encoding](#encoding)
+    - [Feeds](#feeds)
+    - [Routing](#routing)
+    - [Encoding](#encoding)
 - [Usage](#usage)
-  - [Creating a new feed](#creating-a-new-feed)
-  - [Feed configuration options](#configuring-a-feed)
-  - [Feed model configuration](#configuring-the-feed-model)
-  - [Fully configured model example](#fully-configured-model-example)
-  - [Additional feed configuration options](#additional-feed-configuration-options)
+    - [Creating a new feed](#creating-a-new-feed)
+    - [Feed configuration options](#configuring-a-feed)
+    - [Feed model configuration](#configuring-the-feed-model)
+    - [Fully configured model example](#fully-configured-model-example)
+    - [Additional feed configuration options](#additional-feed-configuration-options)
 - [Outputting meta tags to view](#outputting-meta-tags-to-view)
 
 ## Installation
@@ -52,6 +52,7 @@ php artisan vendor:publish --tag=laravel-syndication
 # Config
 
 # Feeds
+
 ```php
 /*
  * Feeds that can be used for syndication are defined here. This should be
@@ -65,6 +66,7 @@ php artisan vendor:publish --tag=laravel-syndication
 ```
 
 ## Routing
+
 ```php
 'routing' => [
     /*
@@ -82,6 +84,7 @@ php artisan vendor:publish --tag=laravel-syndication
 ```
 
 ## Encoding
+
 ```php
 /*
  * Encoding for the generated files, it will default to utf8 if there is no
@@ -95,17 +98,20 @@ php artisan vendor:publish --tag=laravel-syndication
 
 Sets the default caching value for all feeds. If set to false, nothing will be
 cached and no values current cached will be read.
+
 ```php
 'cache_feeds' => true,
 ```
 
 Specify the cache store to use. Using `null` will default to the default cache
 store.
+
 ```php
 'cache_store' => null,
 ```
 
 How long (in minutes) the cache is valid for.
+
 ```php
 'cache_ttl' => 1440,
 ```
@@ -156,80 +162,46 @@ Under the `feeds` key, add the FQN of the feed you just created.
 
 #### Feed Types
 
-Use the following interfaces if you wish to specify additional or alternative feed types on your Feed class object.
+Use the following base classes to determine the kind of feeds that can be 
+generated, and the methods that are available in the `setUp()` method.
 
-|               | **RSS Only**       | **RSS & Atom**                                        | **Atom Only**                                             |
-|---------------|--------------------|-------------------------------------------------------|-----------------------------------------------------------|
-| **Interface** | `<none> (Default)` | `\LaravelSyndication\Contracts\Feeds\AtomFeed::class` | `\LaravelSyndication\Contracts\Feeds\AtomFeedOnly::class` |
+|                | **Base Class**                                   |
+|----------------|--------------------------------------------------|
+| **RSS Only**   | `LaravelSyndication\Feeds\RssFeed::class`        |
+| **RSS & Atom** | `LaravelSyndication\Feeds\RssAndAtomFeed::class` |
+| **Atom Only**  | `LaravelSyndication\Feeds\AtomFeed::class`       |
 
-#### Specifying the model
+#### Configuration methods
+
+All configuration on a feed object is done in the `setUp()` method.
+
+For example:
 
 ```php
-public function model(): string
+namespace App\Feeds;
+
+class Podcast extends RssAndAtomFeed
 {
-    return App\Models\Podcast::class;
+  public function setUp(): void
+  {
+    $this->model(\App\Models\Podcast::class)
+      ->title("Awesome Podcast")
+      ->description("An amazing podcast.")
+      ->url(url('/podcasts'))
+      ->language("en")
+      ->updated($this->lastCachedAt());
+  }
 }
 ```
 
-#### Specifying the `title`
-
-```php
-public function title(): string
-{
-    return "My Awesome Podcast";
-}
-```
-
-#### Specifying the `url`/`link`
-
-```php
-public function url(): string
-{
-    return url("shows");
-}
-```
-
-#### Specifying the `description`
-
-```php
-public function description(): string
-{
-    return __('An awesome podcast, made by me.');
-}
-```
-
-#### Filtering to relevant models
-
-```php
-public function filter(Builder $builder): Builder
-{
-    return $builder
-        ->orderByDesc('created_at')
-        ->where('status', 'published')
-        ->where('published_at', '<=', now());
-}
-```
-
-### Specify author for atom feeds
-
-```php
-public function atomAuthor(): null|Collection|array|Person
-{
-    return new \LaravelSyndication\Feeds\Structure\Atom\Person(
-        name: "John Doe", 
-        email: "john@example.com", 
-        uri: "https://exmaple.com/person/john-doe"
-    );
-}
-```
 
 ### Configuring the feed model
 
-Once you have created your feed object and specified the model and filter you 
+Once you have created your feed object and specified the model and filter you
 would like to use when generating feed contents. You will need to add the
 `LaravelSyndication\Contracts\Models\IsSyndicationItem` interface to your model.
 
-The `IsSyndicationItem` interface specifies a single method `toFeedItem` that 
+The `IsSyndicationItem` interface specifies a single method `toFeedItem` that
 is expected to return an instance of `LaravelSyndication\Feeds\FeedItem`.
 
 For example:
@@ -244,7 +216,7 @@ function toFeedItem(): FeedItem
 }
 ```
 
-You can also create the feed item using an associative array if you prefer, by 
+You can also create the feed item using an associative array if you prefer, by
 passing it as an argument to the FeedItem construct. For example:
 
 ```php
@@ -370,6 +342,7 @@ FeedItem::source(\LaravelSyndication\Feeds\Structure\Items\Atom\Source $source)
 ```
 
 Below is an example of how you might configure a source:
+
 ```php
 FeedItem::source(
   new Source(
@@ -452,7 +425,7 @@ function toFeedItem(): FeedItem
 
 #### Adding copyright information
 
-Add the `LaravelSyndication\Contracts\Feeds\SyndicatesWithCopyright` interface, 
+Add the `LaravelSyndication\Contracts\Feeds\SyndicatesWithCopyright` interface,
 you will then have to declare the following method:
 
 ```php
@@ -461,7 +434,7 @@ function copyright(): ?string;
 
 #### Adding category information
 
-Add the `LaravelSyndication\Contracts\Feeds\SyndicatesWithCategory` interface, 
+Add the `LaravelSyndication\Contracts\Feeds\SyndicatesWithCategory` interface,
 you will then have to declare the following method:
 
 ```php
@@ -470,7 +443,7 @@ function category(): ?string;
 
 #### Adding image information
 
-Add the `LaravelSyndication\Contracts\Feeds\SyndicatesWithImage` interface, 
+Add the `LaravelSyndication\Contracts\Feeds\SyndicatesWithImage` interface,
 you will then have to declare the following methods:
 
 ```php
@@ -479,7 +452,8 @@ function image(): \LaravelSyndication\Feeds\Structure\FeedImage;
 
 #### Adding cloud data
 
-Specify the `cloud` method on your `Feed` object, and return an instance of `\LaravelSyndication\Feeds\Structure\FeedCloud`, for example:
+Specify the `cloud` method on your `Feed` object, and return an instance
+of `\LaravelSyndication\Feeds\Structure\FeedCloud`, for example:
 
 ```php
 function cloud(): \LaravelSyndication\Feeds\Structure\FeedCloud
@@ -495,7 +469,7 @@ function cloud(): \LaravelSyndication\Feeds\Structure\FeedCloud
 
 #### Adding a generator
 
-The generator can be used to specify the application used to generate the feed, 
+The generator can be used to specify the application used to generate the feed,
 and can be expressed either using the `generator` property or `generator()` method.
 
 ```php
@@ -527,7 +501,7 @@ function ttl()
 
 # Outputting meta tags to view
 
-Add the following code to your blade views to output meta tags for registered 
+Add the following code to your blade views to output meta tags for registered
 feeds.
 
 These use the alias of the facade at: `LaravelSyndication\Facades\Syndicate`
