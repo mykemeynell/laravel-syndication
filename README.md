@@ -8,16 +8,17 @@ Atom or both - for specified models.
     - [Without auto-discover](#without-auto-discovery)
 - [Publishing the configuration](#publish-the-configuration)
 - [Config](#config)
-    - [Feeds](#feeds)
-    - [Routing](#routing)
-    - [Encoding](#encoding)
+  - [Feeds](#feeds)
+  - [Routing](#routing)
+  - [Encoding](#encoding)
+  - [Caching](#caching)
 - [Usage](#usage)
-    - [Creating a new feed](#creating-a-new-feed)
-    - [Feed configuration options](#configuring-a-feed)
-    - [Feed model configuration](#configuring-the-feed-model)
+  - [Creating a new feed](#creating-a-new-feed)
+  - [Configuring a `Feed`](#configuring-a-feed)
+    - [Feed Types](#feed-types)
+  - [Configuring the feed model](#configuring-the-feed-model)
     - [Fully configured model example](#fully-configured-model-example)
-    - [Additional feed configuration options](#additional-feed-configuration-options)
-- [Outputting meta tags to view](#outputting-meta-tags-to-view)
+  - [Outputting meta tags to view](#outputting-meta-tags-to-view)
 
 ## Installation
 
@@ -421,85 +422,7 @@ function toFeedItem(): FeedItem
 
 ---
 
-### Additional `Feed` configuration options
-
-#### Adding copyright information
-
-Add the `LaravelSyndication\Contracts\Feeds\SyndicatesWithCopyright` interface,
-you will then have to declare the following method:
-
-```php
-function copyright(): ?string;
-```
-
-#### Adding category information
-
-Add the `LaravelSyndication\Contracts\Feeds\SyndicatesWithCategory` interface,
-you will then have to declare the following method:
-
-```php
-function category(): ?string;
-```
-
-#### Adding image information
-
-Add the `LaravelSyndication\Contracts\Feeds\SyndicatesWithImage` interface,
-you will then have to declare the following methods:
-
-```php
-function image(): \LaravelSyndication\Feeds\Structure\FeedImage;
-```
-
-#### Adding cloud data
-
-Specify the `cloud` method on your `Feed` object, and return an instance
-of `\LaravelSyndication\Feeds\Structure\FeedCloud`, for example:
-
-```php
-function cloud(): \LaravelSyndication\Feeds\Structure\FeedCloud
-{
-    return (new FeedCloud)
-        ->domain('example.com')
-        ->path('/rpc')
-        ->port(443)
-        ->procedure('NotifyMe')
-        ->protocol('xml-rpc');
-}
-```
-
-#### Adding a generator
-
-The generator can be used to specify the application used to generate the feed,
-and can be expressed either using the `generator` property or `generator()` method.
-
-```php
-public $generator = "My Feed Generator v1.0";
-```
-
-```php
-function generator()
-{
-    return sprintf("My Feed Generator v%s", app()->version());
-}
-```
-
-#### Adding a TTL
-
-Specifies the number of minutes the feed can stay cached before refreshing it from the source,
-and can be expressed either using the `ttl` property or `ttl()` method.
-
-```php
-public $ttl = 1440;
-```
-
-```php
-function ttl()
-{
-    return 24*60;
-}
-```
-
-# Outputting meta tags to view
+## Outputting meta tags to view
 
 Add the following code to your blade views to output meta tags for registered
 feeds.
