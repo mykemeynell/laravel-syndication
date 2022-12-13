@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use LaravelSyndication\Contracts\Feeds\AtomFeed;
+use LaravelSyndication\Contracts\Feeds\AtomFeedOnly;
 use LaravelSyndication\Contracts\Feeds\SyndicatesWithCategory;
 use LaravelSyndication\Contracts\Feeds\SyndicatesWithCopyright;
 use LaravelSyndication\Contracts\Feeds\SyndicatesWithImage;
@@ -51,6 +53,26 @@ abstract class Feed
      * @return string
      */
     abstract function url(): string;
+
+    /**
+     * Returns true if this feed is available in an Atom format.
+     *
+     * @return bool
+     */
+    public function hasAtomLink(): bool
+    {
+        return $this instanceof AtomFeed || $this instanceof AtomFeedOnly;
+    }
+
+    /**
+     * Get the atom feed link for this feed.
+     *
+     * @return string
+     */
+    public function getAtomFeed(): string
+    {
+        return route('syndication', $this->identifier . '.atom');
+    }
 
     /**
      * Test if this feed has category data.

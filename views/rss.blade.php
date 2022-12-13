@@ -6,8 +6,11 @@
 @endphp
 {!! '<?xml version="1.0" encoding="' . $encoding . '" ?>' !!}
 
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
+        @if($feed->hasAtomLink())
+        <atom:link href="{{ $feed->atomSelfLink() }}" rel="self" type="application/rss+xml" />
+        @endif
         <title>{{ $feed->title() }}</title>
         <link>{{ $feed->url() }}</link>
         <description><![CDATA[{!! $feed->description() !!}]]></description>
@@ -29,6 +32,7 @@
         <item>
             <title>{{ $item->getTitle() }}</title>
             <link>{{ $item->getUrl() }}</link>
+            <guid>{{ $item->getUrl() }}</guid>
             <description><![CDATA[{!! $item->getDescription() !!}]]></description>
             @if($item->hasAuthor())
                 @if($item->getAuthor() instanceof \LaravelSyndication\Feeds\Structure\Atom\Person)
