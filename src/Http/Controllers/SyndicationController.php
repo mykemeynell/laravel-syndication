@@ -51,10 +51,10 @@ class SyndicationController extends Controller
             return abort(404);
         }
 
-        $feedData = $feed->isCached()
+        $feedData = $feed->isCached() && $feed->shouldUseCache()
             ? $feed->getDataFromCache() : $feed->getData();
 
-        if(!$feed->isCached()) {
+        if(!$feed->isCached() && $feed->shouldUseCache()) {
             $feed->saveToCache();
         }
 

@@ -32,6 +32,62 @@ trait UsesCache
     }
 
     /**
+     * Tests if the cache should be used.
+     *
+     * @return bool
+     */
+    public function shouldUseCache(): bool
+    {
+        $cachingConfig = collect(
+            config('syndication.caching', [])
+        );
+
+        $globalCacheFeeds = config('syndication.cache_feeds', false);
+
+        if($globalCacheFeeds && !$cachingConfig->has($this->cacheKey())) {
+            return true;
+        }
+
+        if(
+            !$globalCacheFeeds &&
+            $cachingConfig->has($this->cacheKey()) &&
+            $cachingConfig->get($this->cacheKey()) !== false &&
+            $cachingConfig->get($this->cacheKey()) > 0
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the TTL value for this feeds cache.
+     *
+     * @return int
+     */
+    public function cacheTtl(): int
+    {
+        $cachingConfig = collect(
+            config('syndication.caching', [])
+        );
+
+        $globalCacheTtl = config('syndication.cache_ttl', 1440);
+
+        if($globalCacheTtl && !$cachingConfig->has($this->cacheKey())) {
+            return $globalCacheTtl;
+        }
+
+        if(
+            $cachingConfig->has($this->cacheKey()) &&
+            $cachingConfig->get($this->cacheKey()) !== false
+        ) {
+            return -1;
+        }
+
+        return $cachingConfig->get($this->cacheKey());
+    }
+
+    /**
      * Get the cached timestamp key.
      *
      * @return Carbon
@@ -56,31 +112,17 @@ trait UsesCache
     /**
      * Save the content data to the cache.
      *
-     * @return false|mixed
+     * @return bool
      */
-    public function saveToCache(): mixed
+    public function saveToCache(): bool
     {
-        $cacheKey = $this->cacheKey();
-        $globalCacheFeeds = config('syndication.cache_feeds', false);
-        $globalCacheTtl = config('syndication.cache_ttl', 1440);
-
-        $cachingConfig = collect(
-            config('syndication.caching', [])
-        );
-
-        $cacheThisFeed = ($cachingConfig->has($cacheKey) && $cachingConfig->get($cacheKey) !== false && $cachingConfig->get($cacheKey) > 0)
-            || $globalCacheFeeds;
-
-        $cacheTtl = $cachingConfig->has($cacheKey) && $cachingConfig->get($cacheKey) !== false && $cachingConfig->get($cacheKey) > 0
-            ? $cachingConfig->get($cacheKey) : $globalCacheTtl;
-
-        if($cacheThisFeed) {
+        if($this->shouldUseCache()) {
             $now = now();
-            $expires = $now->addMinutes($cacheTtl * 60);
+            $expires = $now->addMinutes($this->cacheTtl() * 60);
 
             return
-                $this->cache()->remember($cacheKey, $expires, fn () => $this->getData()) &&
-                $this->cache()->remember($cacheKey . "_timestamp", $expires, fn () => $now);
+                $this->cache()->remember($this->cacheKey(), $expires, fn () => $this->getData()) &&
+                $this->cache()->remember($this->cacheKey() . "_timestamp", $expires, fn () => $now);
         }
 
         return false;
