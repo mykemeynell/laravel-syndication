@@ -1,8 +1,6 @@
 <?php
 
-namespace %
-
-NAMESPACE%;
+namespace %NAMESPACE%;
 
 use Illuminate\Database\Eloquent\Builder;
 use LaravelSyndication\Feeds\Feed;
@@ -14,7 +12,7 @@ use LaravelSyndication\Contracts\Feeds\{
     AtomFeedOnly
 };
 
-class %CLASS_NAME % extends Feed
+class %CLASS_NAME% extends Feed
 {
     function model(): string
     {
