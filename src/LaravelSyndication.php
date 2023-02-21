@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use LaravelSyndication\Feeds\AtomFeed;
 use LaravelSyndication\Feeds\Feed;
 use LaravelSyndication\Feeds\RssAndAtomFeed;
@@ -31,7 +32,7 @@ class LaravelSyndication
      * @throws BindingResolutionException
      * @throws Exception
      */
-    public function meta(...$feeds): string
+    public function meta(...$feeds): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
     {
         if(empty($feeds)) {
             $feeds = collect(config('syndication.feeds'))->keys()->toArray();
