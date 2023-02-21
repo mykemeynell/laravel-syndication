@@ -6,9 +6,10 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use LaravelSyndication\Contracts\Feeds\AtomFeed;
-use LaravelSyndication\Contracts\Feeds\AtomFeedOnly;
+use LaravelSyndication\Feeds\AtomFeed;
 use LaravelSyndication\Feeds\Feed;
+use LaravelSyndication\Feeds\RssAndAtomFeed;
+use LaravelSyndication\Feeds\RssFeed;
 
 class LaravelSyndication
 {
@@ -61,7 +62,7 @@ class LaravelSyndication
     {
         $feeds = collect([]);
 
-        if($feed instanceof AtomFeed) {
+        if($feed instanceof AtomFeed || $feed instanceof RssAndAtomFeed) {
             $feeds->push([
                 'type' => 'application/atom+xml',
                 'title' => sprintf("%s Atom feed", ucfirst(Str::plural($feedTag))),
@@ -69,7 +70,7 @@ class LaravelSyndication
             ]);
         }
 
-        if(!$feed instanceof AtomFeedOnly) {
+        if($feed instanceof RssFeed || $feed instanceof RssAndAtomFeed) {
             $feeds->push([
                 'type' => 'application/rss+xml',
                 'title' => sprintf("%s RSS feed", ucfirst(Str::plural($feedTag))),
